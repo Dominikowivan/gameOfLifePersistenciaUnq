@@ -19,17 +19,17 @@ public class ThreadPool {
     public ThreadPool(BufferDeRegiones unBuffer){
         // por default hay un solo Thread, que trabaja como productor.
         cantidadDeWorkersProductores = 1;
-        cantidadDeWorkersConsumidores = 0;
+        cantidadDeWorkersConsumidores = 1;
 
         bufferDeRegiones = unBuffer;
     }
 
 
     public void cambiarCantidadDeWorkers(int threads) {
-        //  No se puede trabajar con menos de 1 Thread, asi que cualquier numero menor a este se ignora.
-        if (threads <= 1 ){
+        //  No se puede trabajar con menos de 2 Thread, asi que cualquier numero menor a este se ignora.
+        if (threads <= 2 ){
             cantidadDeWorkersProductores = 1;
-            cantidadDeWorkersConsumidores = 0;
+            cantidadDeWorkersConsumidores = 1;
         }
         else{
             // Se setean la mitad como productores, y la mitad como consumidores.
@@ -41,7 +41,7 @@ public class ThreadPool {
 
     public void ponerProductoresATrabajar() {
         //por cada uno de mis productores
-        for (int i = 0; i <= cantidadDeWorkersProductores ; i++) {
+        for (int i = 0; i < cantidadDeWorkersProductores ; i++) {
 
             //creo el worker que va a trabajar produciendo, y lo pongo a trabajar.
             Worker worker = new Worker(this.bufferDeRegiones, new EstrategiaDeProduccion());
@@ -51,7 +51,7 @@ public class ThreadPool {
 
     public void ponerConsumidoresAResetearCeldas(Enumeration e) {
         //por cada uno de mis consumidores
-        for (int i = 0; i <= cantidadDeWorkersConsumidores ; i++) {
+        for (int i = 0; i < cantidadDeWorkersConsumidores ; i++) {
 
             //creo el worker que va a trabajar consumiento, y lo pongo a trabajar.
             Worker worker = new Worker(this.bufferDeRegiones, new EstrategiaDeReseteoDeCeldas(e));

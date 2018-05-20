@@ -37,12 +37,12 @@ public class BufferDeRegiones {
             RegionDeTablero regionDeTablero = unWorker.construirRegion(celdasParaTrabajar);
 
             buffer.push(regionDeTablero);
-            notify();
+            notifyAll();
         }
 
     }
 
-    public void resetearCeldas(Enumeration e,Worker unWorker) throws InterruptedException {
+    public synchronized void resetearCeldas(Enumeration e,Worker unWorker) throws InterruptedException {
         while (this.faltanConsumirRegiones()){
             if(!this.hayRegionEnBuffer()){
                 wait();
@@ -52,7 +52,7 @@ public class BufferDeRegiones {
 
             unWorker.resetearRegion(e,regionDeTablero);
 
-            notify();
+            notifyAll();
         }
 
 
