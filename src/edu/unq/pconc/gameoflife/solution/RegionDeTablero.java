@@ -2,9 +2,9 @@ package edu.unq.pconc.gameoflife.solution;
 
 public class RegionDeTablero {
 
-    Integer cantidadDeCeldas;
+    Integer cantidadCelulas;
 
-    public RegionDeTablero(Integer cantidadDeCeldasDeCadaRegion) {
-        cantidadDeCeldas = cantidadDeCeldasDeCadaRegion;
+    public RegionDeTablero(Integer cantidadDeCelulas) {
+        cantidadCelulas = cantidadDeCelulas;
     }
 }

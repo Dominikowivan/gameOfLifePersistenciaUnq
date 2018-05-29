@@ -9,6 +9,7 @@ public class Worker extends Thread {
 
     private BufferDeRegiones unBufferDeRegiones;
     private EstrategiaDeTrabajo unaEstrategiaDeTrabajo;
+    private GameOfLifeGrid golg;
 
     public Worker(BufferDeRegiones bufferDeRegiones, EstrategiaDeTrabajo estrategiaDeTrabajo) {
         unBufferDeRegiones     = bufferDeRegiones;
@@ -30,11 +31,26 @@ public class Worker extends Thread {
 
     }
 
-    public void resetearRegion(Enumeration e, RegionDeTablero regionDeTablero) {
+    public void resetearRegion(RegionDeTablero regionDeTablero) {
 
-        for (int i = 0; i < regionDeTablero.cantidadDeCeldas ; i++) {
-            Cell cell = (Cell) e.nextElement();
-            cell.neighbour = 0;
-        }
+        golg.resetearRegion(regionDeTablero);
+
+
     }
+
+	public void agregarVecinosRegion(RegionDeTablero regionDeTablero) {
+	        golg.agregarVecinosRegion(regionDeTablero);
+	}
+
+	public void setGolg(GameOfLifeGrid golg) {
+		this.golg = golg;
+	}
+
+	public void eliminarMuertosRegion( RegionDeTablero regionDeTablero) {
+	    golg.eliminarMuertosRegion(regionDeTablero);
+	}
+
+	public void nuevasCeldas(RegionDeTablero regionDeTablero) {
+		golg.nuevasCeldas(regionDeTablero);
+	}
 }

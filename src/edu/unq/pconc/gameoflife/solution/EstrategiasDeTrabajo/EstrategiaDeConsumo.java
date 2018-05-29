@@ -6,15 +6,10 @@ import edu.unq.pconc.gameoflife.solution.Worker;
 
 import java.util.Enumeration;
 
-public class EstrategiaDeReseteoDeCeldas implements EstrategiaDeTrabajo {
-    private Enumeration anEnum;
-
-    public EstrategiaDeReseteoDeCeldas(Enumeration e) {
-        anEnum = e;
-    }
+public class EstrategiaDeConsumo implements EstrategiaDeTrabajo {
 
     @Override
     public void trabajar(BufferDeRegiones unBufferDeRegiones, Worker unWorker) throws InterruptedException {
-        unBufferDeRegiones.resetearCeldas(anEnum,unWorker);
+        unBufferDeRegiones.resetearCeldas(unWorker);
     }
 }
