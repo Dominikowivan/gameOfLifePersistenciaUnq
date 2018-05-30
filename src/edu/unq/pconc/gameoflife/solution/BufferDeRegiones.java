@@ -17,7 +17,7 @@ public class BufferDeRegiones {
 	}
 
 	public synchronized void producirRegiones(Productor productor) throws InterruptedException {
-		System.out.println("Empeze a producir regiones");
+		//System.out.println("Empeze a producir regiones");
 		while (this.faltanTrabajarRegiones()) {
 			if (!this.hayLugarEnElBuffer()) {
 				wait();
@@ -32,11 +32,11 @@ public class BufferDeRegiones {
 
 			notifyAll();
 		}
-		System.out.println("termine de producir Regiones");
+		//System.out.println("termine de producir Regiones");
 	}
 
 	public synchronized void resetearCeldas(Consumidor unWorker) throws InterruptedException {
-		System.out.println("Empeze a resetear regiones");
+		//System.out.println("Empeze a resetear regiones");
 		while (this.faltanConsumirRegiones()) {
 			if (!this.hayRegionEnBuffer()) {
 				wait();
@@ -48,11 +48,11 @@ public class BufferDeRegiones {
 			}
 			notifyAll();
 		}
-		System.out.println("termine de Resetear regiones");
+	//	System.out.println("termine de Resetear regiones");
 	}
 
 	public synchronized void agregarVecinos(Consumidor unWorker) throws InterruptedException {
-		System.out.println("Empeze a agregar Vecinos");
+		//System.out.println("Empeze a agregar Vecinos");
 		while (this.faltanConsumirRegiones()) {
 			if (!this.hayRegionEnBuffer()) {
 				wait();
@@ -68,7 +68,7 @@ public class BufferDeRegiones {
 	}
 
 	public synchronized void eliminarMuertos(Consumidor unWorker) throws InterruptedException {
-		System.out.println("Empeze a eliminar muertos");
+		//System.out.println("Empeze a eliminar muertos");
 		while (this.faltanConsumirRegiones()) {
 			if (!this.hayRegionEnBuffer()) {
 				wait();
@@ -83,7 +83,7 @@ public class BufferDeRegiones {
 	}
 
 	public synchronized void nuevasCeldas(Consumidor unWorker)  throws InterruptedException{
-		System.out.println("Empeze traer a los nacidos");
+		//System.out.println("Empeze traer a los nacidos");
 		while (this.faltanConsumirRegiones()){
             if(!this.hayRegionEnBuffer()){
                 wait();
@@ -95,7 +95,7 @@ public class BufferDeRegiones {
 			}
             notifyAll();
 		}
-		System.out.println("Termine de traer a los nacidos");
+		//System.out.println("Termine de traer a los nacidos");
 	}
 
 	private boolean hayRegionEnBuffer() {

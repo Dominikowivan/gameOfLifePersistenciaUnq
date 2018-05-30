@@ -24,7 +24,7 @@ public class Productor extends Worker {
     }
 
 	public RegionDeTablero construirRegion(Cell cell) {
-		 System.out.println("estoy creando una region para" + cell);
+		// System.out.println("estoy creando una region para" + cell);
 		return new RegionDeTablero(cell);
 	}
 

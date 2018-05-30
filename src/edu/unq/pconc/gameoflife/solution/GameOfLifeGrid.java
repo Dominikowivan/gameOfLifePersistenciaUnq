@@ -78,11 +78,11 @@ public class GameOfLifeGrid implements CellGrid {
 		generations++;
 		nextShape.clear();
 		
-		/*this.prepararLasLlavesParaEntrar();
-		unThreadpool.ponerTrabajadoresATrabajar();*/
+		this.prepararLasLlavesParaEntrar();
+		unThreadpool.ponerTrabajadoresATrabajar();
 
 		
-this.resetcells(); this.addvecinos(); this.buryDead(); this.bringNewBorns(); 
+		//this.resetcells(); this.addvecinos(); this.buryDead(); this.bringNewBorns(); 
 		
 
 	}
