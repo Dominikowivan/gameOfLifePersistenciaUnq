@@ -1,10 +1,15 @@
 package edu.unq.pconc.gameoflife.solution;
 
 public class RegionDeTablero {
+	
+	  Cell celulaAsociada;
+	  
+	  public RegionDeTablero(Cell unaCelula) {
+		  celulaAsociada = unaCelula;
+	    }
 
-    Integer cantidadCelulas;
+	public Cell getCell() {
+		return celulaAsociada;
+	}
 
-    public RegionDeTablero(Integer cantidadDeCelulas) {
-        cantidadCelulas = cantidadDeCelulas;
-    }
 }

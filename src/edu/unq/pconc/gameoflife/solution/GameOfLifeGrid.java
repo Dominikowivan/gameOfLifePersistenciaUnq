@@ -1,7 +1,6 @@
 package edu.unq.pconc.gameoflife.solution;
 
 import java.awt.Dimension;
-import java.nio.channels.SeekableByteChannel;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
@@ -18,19 +17,18 @@ public class GameOfLifeGrid implements CellGrid {
   private int cellCols;
   private int generations;
   private static Shape[] shapes;
-
+  
   private ThreadPool unThreadpool;
   private BufferDeRegiones bufferParaTrabajadores;
-
+  private CabinaDeDescanso unaCabinaDeDescanso;
+  public Enumeration e;
+  
   /**
    * Contains the current, living shape.
    * It's implemented as a hashtable. Tests showed this is 70% faster than Vector.
    */
-  private Hashtable currentShape;
-  private Hashtable nextShape;
-
-  private Enumeration e;
-
+  Hashtable currentShape;
+  Hashtable nextShape;
   /**
    * Every cell on the grid is a Cell object. This object can become quite large.
    */
@@ -52,22 +50,9 @@ public class GameOfLifeGrid implements CellGrid {
     for ( int c=0; c<cellCols; c++)
       for ( int r=0; r<cellRows; r++ )
         grid[c][r] = new Cell( c, r );
-
-
-    // Cambios agregados:
-
-    // Se crea el Threadpool donde se inician los Workers productores y los consumidores. Para producir celdas,
-    // los productores van a necesitar saber en cuantas regiones tienen que dividir el tablero, y cuantas celdas tiene este.
-    // Eso se obtiene facilmente haciendo la multiplicacionde columnas y filas
-
-    // Por defecto dejamos la cantidad de regiones en 25.
-
-    // Finalmente, el buffer que utilizara tiene un tamaño por defecto de 3 Regiones
-
-
-    bufferParaTrabajadores 			  = new BufferDeRegiones(3,10);
-    unThreadpool= new ThreadPool(bufferParaTrabajadores);
-
+    bufferParaTrabajadores 	= new BufferDeRegiones(3,this);
+    unaCabinaDeDescanso     = new CabinaDeDescanso(this); 
+    unThreadpool		    = new ThreadPool(bufferParaTrabajadores,unaCabinaDeDescanso);
   }
 
   /**
@@ -86,52 +71,44 @@ public class GameOfLifeGrid implements CellGrid {
     Cell cell;
     int col, row;
     int neighbours;
+    Enumeration e;
 
     generations++;
     nextShape.clear();
-
-    e = currentShape.keys();
-
-    // Lo primero que se hace es dar las regiones al ThreadPool para que se encargue de generar los workers que van a poner las
-    // regiones en el buffer, actuando como productores.
-
-    // Esto va a poner a trabajar a levantar un thread y va a po
-    bufferParaTrabajadores.resetEtapas();
-
-
-    unThreadpool.gameOfLifeGrid(this);
-
-    unThreadpool.celulasATrabajar(currentShape.size());
-    unThreadpool.ponerProductoresATrabajar();
-    unThreadpool.ponerConsumidoresATrabajar(this);
-
-
-    /////////// //trabajo de worker: resetear las regiones//////////////
-    // Esto estaba asi:
-    //while ( e.hasMoreElements() ) {
-    // cell = (Cell) e.nextElement();
-    // cell.neighbour = 0;
-    //}
-    ////////////////////////////////////////////////////////////////////
-
-
-    //cambias estrategia de workers y repetis lo mismo de arriba
-    //e = currentShape.keys();
-    //unThreadpool.ponerConsumidoresAAgregarVecinos(e, this);
+  
+   
+    this.prepararLasLlavesParaEntrar();
+  
+    unThreadpool.ponerTrabajadoresATrabajar();
+ 
     
-    //e = currentShape.keys();
+    /*
+
+    // Reset Keys
+    e = currentShape.keys();
+    
+    
+    //Parte de productor
+    while ( e.hasMoreElements() ) {
+      cell = (Cell) e.nextElement();
+      
+      //parte de consumidor
+      cell.neighbour = 0;
+    }
     
     // Add neighbours
     // You can't walk through an hashtable and also add elements. Took me a couple of ours to figure out. Argh!
     // That's why we have a hashNew hashtable.
-
-    /*
+    
+    
+    // Reset Keys
     e = currentShape.keys();
+    
+    //parte de productor
     while ( e.hasMoreElements() ) {
-
-
-      //////////////   trabajo de worker: agregar vecinos     /////
       cell = (Cell) e.nextElement();
+      
+    //parte de consumidor  
       col = cell.col;
       row = cell.row;
       addNeighbour( col-1, row-1 );
@@ -142,65 +119,66 @@ public class GameOfLifeGrid implements CellGrid {
       addNeighbour( col-1, row+1 );
       addNeighbour( col, row+1 );
       addNeighbour( col+1, row+1 );
-      ////////////////////////////////////////////////////////
-
-
     }
-
-    //cambias estrategia de workers.
-    //e = currentShape.keys();
-    //unThreadpool.ponerConsumidoresEliminarMuertos(e,this);
-    */
     
-    //e = currentShape.keys();
     
-    /*
     // Bury the dead
     // We are walking through an enum from we are also removing elements. Can be tricky.
-    e = currentShape.keys();
+     
+     // Reset keys
+     e = currentShape.keys();
+      
+    //parte de productor
     while ( e.hasMoreElements() ) {
-
-
-
-      ///////// trabajo de worker: Remover los muertos ///////
       cell = (Cell) e.nextElement();
+      
+      
+     //Parte de consumidor
       // Here is the Game Of Life rule (1):
       if ( cell.neighbour != 3 && cell.neighbour != 2 ) {
         currentShape.remove( cell );
       }
-      /////////////////////////////////////////
-
     }
-
-    //cambias estrategia de workers.
     
     // Bring out the new borns
+    
+    // Reset keys (usa next shape keys)
     e = nextShape.keys();
+    
+    // Parte de productor
     while ( e.hasMoreElements() ) {
-
-
-      //////Trabajo de worker: crear las nuevas celdas ////////////////////////////
       cell = (Cell) e.nextElement();
+      
+      // Parte de consumidor
       // Here is the Game Of Life rule (2):
       if ( cell.neighbour == 3 ) {
         setCell( cell.col, cell.row, true );
-
-      //////////////////////////////////////////////
       }
     }
-
-
-*/
+      */
+    
   }
+  
+  void prepararLasLlavesParaEntrar() {
+	  Enumeration e;
+	  e = currentShape.keys();
+	  bufferParaTrabajadores.setKeys(e);
+}
 
+ void prepararLasLlavesParaIrse() {
+	  Enumeration e;
+	  e = nextShape.keys();
+	  bufferParaTrabajadores.setKeys(e);
+}
 
-  /**
+/**
    * Adds a new neighbour to a cell.
    * 
    * @param col Cell-column
    * @param row Cell-row
    */
-//  private synchronized void addNeighbour(int col, int row) {
+  
+  //si falla algo, seguro es aca.
   public synchronized void addNeighbour(int col, int row) {
     try {
       Cell cell = (Cell)nextShape.get( grid[col][row] );
@@ -313,80 +291,8 @@ public class GameOfLifeGrid implements CellGrid {
   }
   
   public void setThreads(int threads) {
-    unThreadpool.cambiarCantidadDeWorkers(threads);
+	  unThreadpool.cambiarCantidadDeWorkers(threads);
   }
-
-	public void removerDeCurrentShape(Cell cell) {
-		currentShape.remove( cell );
-	}
-
-  public void resetearRegion(RegionDeTablero regionDeTablero) {
-
-    for (int i = 0; i < regionDeTablero.cantidadCelulas ; i++) {
-      //System.out.println("Cantidad de celdas" + regionDeTablero.cantidadCelulas);
-      Cell cell = (Cell) e.nextElement();
-      //System.out.println("Voy a trabajar una celda");
-      //System.out.println(cell.toString());
-      cell.neighbour = 0;
-    }
-  }
-
-  public void agregarVecinosRegion(RegionDeTablero regionDeTablero) {
-    int col, row;
-    Cell cell;
-
-    for (int i = 0; i < regionDeTablero.cantidadCelulas ; i++) {
-
-      cell = (Cell) e.nextElement();
-      //System.out.println("Agrego vecinos a la celda: "+ cell.toString());
-      col = cell.col;
-      row = cell.row;
-      this.addNeighbour( col-1, row-1 );
-      this.addNeighbour( col, row-1 );
-      this.addNeighbour( col+1, row-1 );
-      this.addNeighbour( col-1, row );
-      this.addNeighbour( col+1, row );
-      this.addNeighbour( col-1, row+1 );
-      this.addNeighbour( col, row+1 );
-      this.addNeighbour( col+1, row+1 );
-    }
-  }
-
-  public void eliminarMuertosRegion(RegionDeTablero regionDeTablero) {
-    for (int i = 0; i < regionDeTablero.cantidadCelulas ; i++) {
-      Cell cell = (Cell) e.nextElement();
-
-      // Here is the Game Of Life rule (1):
-      if ( cell.neighbour != 3 && cell.neighbour != 2 ) {
-        this.removerDeCurrentShape(cell);
-      }
-    }
-  }
-
-  public void nuevasCeldas(RegionDeTablero regionDeTablero) {
-    for (int i = 0; i < regionDeTablero.cantidadCelulas ; i++) {
-      Cell cell = (Cell) e.nextElement();
-      // Here is the Game Of Life rule (2):
-      if ( cell.neighbour == 3 ) {
-        this.setCell( cell.col, cell.row, true );
-      }
-    }
-  }
-
-  public void setEnumCurrent() {
-    e = currentShape.keys();
-  }
-
-  public void setEnumNext() {
-    e = nextShape.keys();
-  }
-
-  public Hashtable getNextShape() {
-    return nextShape;
-  }
-
-  public Hashtable getCurrentShape() {
-    return currentShape;
-  }
+  
 }
 
