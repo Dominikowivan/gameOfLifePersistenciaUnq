@@ -8,10 +8,10 @@ public class ThreadPool {
 
     private BufferDeRegiones bufferDeRegiones;
     private CabinaDeDescanso unaCabinaDeDescanso;
-	private MonitorDeQueTerminaroLosTrabajadores monitorTrabajador;
+	private MonitorDeQueTerminaronLosTrabajadores monitorTrabajador;
 
     
-    public ThreadPool(BufferDeRegiones unBuffer, CabinaDeDescanso cabinaDeDescanso, MonitorDeQueTerminaroLosTrabajadores unMonitorTrabajador){
+    public ThreadPool(BufferDeRegiones unBuffer, CabinaDeDescanso cabinaDeDescanso, MonitorDeQueTerminaronLosTrabajadores unMonitorTrabajador){
         cantidadDeWorkersProductores = 1;
         cantidadDeWorkersConsumidores = 1;
         

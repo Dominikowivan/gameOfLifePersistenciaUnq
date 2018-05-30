@@ -4,9 +4,9 @@ public class Worker extends Thread {
 
 	public BufferDeRegiones unBufferDeRegiones;
 	public CabinaDeDescanso unaCabinaDeDescanso;
-	public MonitorDeQueTerminaroLosTrabajadores monitorTrabajador;
+	public MonitorDeQueTerminaronLosTrabajadores monitorTrabajador;
 	 
-	public Worker(BufferDeRegiones bufferDeRegiones, CabinaDeDescanso cabinaDeDescanso, MonitorDeQueTerminaroLosTrabajadores unMonitorTrabajador) {
+	public Worker(BufferDeRegiones bufferDeRegiones, CabinaDeDescanso cabinaDeDescanso, MonitorDeQueTerminaronLosTrabajadores unMonitorTrabajador) {
 		unBufferDeRegiones  = bufferDeRegiones;
 		unaCabinaDeDescanso = cabinaDeDescanso; 
 		monitorTrabajador = unMonitorTrabajador;

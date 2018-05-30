@@ -2,7 +2,7 @@ package edu.unq.pconc.gameoflife.solution;
 
 public class Consumidor extends Worker {
 
-	public Consumidor(BufferDeRegiones bufferDeRegiones, CabinaDeDescanso cabinaDeDescanso, MonitorDeQueTerminaroLosTrabajadores monitorTrabajador) {
+	public Consumidor(BufferDeRegiones bufferDeRegiones, CabinaDeDescanso cabinaDeDescanso, MonitorDeQueTerminaronLosTrabajadores monitorTrabajador) {
 		super(bufferDeRegiones, cabinaDeDescanso,monitorTrabajador);
 	}
 
@@ -16,7 +16,6 @@ public class Consumidor extends Worker {
 			unBufferDeRegiones.eliminarMuertos(this);
         	unaCabinaDeDescanso.descansarHastaProximoTrabajo(this,3);
         	unBufferDeRegiones.nuevasCeldas(this);
-        	unaCabinaDeDescanso.descansarHastaProximoTrabajo(this,4);
         	monitorTrabajador.termine(this);
 			
 		} catch (InterruptedException e) {

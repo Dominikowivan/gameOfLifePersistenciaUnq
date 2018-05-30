@@ -44,6 +44,7 @@ public class CabinaDeDescanso {
 		
 		if (turnoDeTrabajo !=3) {
 			golg.prepararLasLlavesParaEntrar();
+			
 		}
 		else {
 			System.out.println("Entre aca");
@@ -58,6 +59,11 @@ public class CabinaDeDescanso {
 
 	public void totalDeTrabajadores(Integer unTotalDeTrabajadores) {
 		cantidadDeTrabajadoresEnLaConstructora = unTotalDeTrabajadores;
+	}
+
+	public void reset() {
+		turnoDeTrabajo=0;
+		
 	}
 
 }

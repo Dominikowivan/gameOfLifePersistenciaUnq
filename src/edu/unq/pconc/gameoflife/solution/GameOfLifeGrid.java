@@ -22,7 +22,7 @@ public class GameOfLifeGrid implements CellGrid {
 	private ThreadPool unThreadpool;
 	private BufferDeRegiones bufferParaTrabajadores;
 	private CabinaDeDescanso unaCabinaDeDescanso;
-	private MonitorDeQueTerminaroLosTrabajadores unMonitorTrabajadores;
+	private MonitorDeQueTerminaronLosTrabajadores unMonitorTrabajadores;
 	private Integer threadsWorking;
 	
 	
@@ -61,7 +61,7 @@ public class GameOfLifeGrid implements CellGrid {
 			for (int r = 0; r < cellRows; r++)
 				grid[c][r] = new Cell(c, r);
 		bufferParaTrabajadores = new BufferDeRegiones(3, this);
-		unMonitorTrabajadores = new MonitorDeQueTerminaroLosTrabajadores();
+		unMonitorTrabajadores = new MonitorDeQueTerminaronLosTrabajadores();
 		unaCabinaDeDescanso = new CabinaDeDescanso(this);
 		unThreadpool = new ThreadPool(bufferParaTrabajadores, unaCabinaDeDescanso,unMonitorTrabajadores);
 		threadsWorking = 2;
@@ -85,12 +85,7 @@ public class GameOfLifeGrid implements CellGrid {
 		generations++;
 		nextShape.clear(); 
 		
-		bufferParaTrabajadores = new BufferDeRegiones(3, this);
-		unMonitorTrabajadores = new MonitorDeQueTerminaroLosTrabajadores();
-		unaCabinaDeDescanso = new CabinaDeDescanso(this);
-		unThreadpool = new ThreadPool(bufferParaTrabajadores, unaCabinaDeDescanso,unMonitorTrabajadores);
-		unThreadpool.cambiarCantidadDeWorkers(threadsWorking);
-		
+		unThreadpool.cambiarCantidadDeWorkers(threadsWorking);		
 		this.prepararLasLlavesParaEntrar();
 		
 		if(threadsWorking == 1){
@@ -101,6 +96,7 @@ public class GameOfLifeGrid implements CellGrid {
 			unThreadpool.ponerTrabajadoresATrabajar();
 			try {
 				unMonitorTrabajadores.esperarAQueTerminenTrabajadores();
+				unaCabinaDeDescanso.reset();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}	

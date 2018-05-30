@@ -1,12 +1,12 @@
 package edu.unq.pconc.gameoflife.solution;
 
-public class MonitorDeQueTerminaroLosTrabajadores {
+public class MonitorDeQueTerminaronLosTrabajadores {
 
 	public Integer workersQueTerminaron;
 	public Integer cantidadDeWorkersQueTengo;
 	
 	
-	public MonitorDeQueTerminaroLosTrabajadores(){
+	public MonitorDeQueTerminaronLosTrabajadores(){
 		workersQueTerminaron = 0;
 		cantidadDeWorkersQueTengo = 0;
 	}
