@@ -6,39 +6,34 @@ public class ThreadPool {
     private Integer cantidadDeWorkersProductores;
     private Integer cantidadDeWorkersConsumidores;
 
-    private BufferDeRegiones bufferDeRegiones;
-    private CabinaDeDescanso unaCabinaDeDescanso;
+    private BufferDeRegiones                      bufferDeRegiones;
+    private CabinaDeDescanso                      unaCabinaDeDescanso;
 	private MonitorDeQueTerminaronLosTrabajadores monitorTrabajador;
 
     
     public ThreadPool(BufferDeRegiones unBuffer, CabinaDeDescanso cabinaDeDescanso, MonitorDeQueTerminaronLosTrabajadores unMonitorTrabajador){
-        cantidadDeWorkersProductores = 1;
+        cantidadDeWorkersProductores  = 1;
         cantidadDeWorkersConsumidores = 1;
         
-        bufferDeRegiones = unBuffer;
+        bufferDeRegiones    = unBuffer;
         unaCabinaDeDescanso = cabinaDeDescanso;
-        monitorTrabajador = unMonitorTrabajador;
-        this.ponerSillasEnLaCabina();
+        monitorTrabajador   = unMonitorTrabajador;
+        this.cantidadTrabajadores();
     }
     
-    private void ponerSillasEnLaCabina() {
+    private void cantidadTrabajadores() {
         Integer unTotalDeTrabajadores = cantidadDeWorkersProductores+cantidadDeWorkersConsumidores;
         unaCabinaDeDescanso.totalDeTrabajadores(unTotalDeTrabajadores);
-        monitorTrabajador.totalDeTrabajadores(unTotalDeTrabajadores);
+        monitorTrabajador  .totalDeTrabajadores(unTotalDeTrabajadores);
 	}
 
 	public void cambiarCantidadDeWorkers(int threads) {
-        if (threads <= 2 ){
-            cantidadDeWorkersProductores = 1;
-            cantidadDeWorkersConsumidores = 1;
-        }
-        else{
-
-            cantidadDeWorkersProductores = threads/2+ threads%2;
-            cantidadDeWorkersConsumidores =  threads/2 ;
-        }
         
-        this.ponerSillasEnLaCabina();
+        cantidadDeWorkersProductores  = threads/2+ threads%2;
+        cantidadDeWorkersConsumidores =  threads/2 ;
+        
+        
+        this.cantidadTrabajadores();
     }
     
     public void ponerTrabajadoresATrabajar() {

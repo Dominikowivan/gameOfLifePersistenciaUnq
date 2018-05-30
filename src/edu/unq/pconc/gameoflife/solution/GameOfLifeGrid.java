@@ -85,21 +85,25 @@ public class GameOfLifeGrid implements CellGrid {
 		generations++;
 		nextShape.clear(); 
 		
-		unThreadpool.cambiarCantidadDeWorkers(threadsWorking);		
-		this.prepararLasLlavesParaEntrar();
-		
-		if(threadsWorking == 1){
+		if(threadsWorking <= 1){
 			this.resetcells(); this.addvecinos(); this.buryDead(); this.bringNewBorns(); 	
 		}
 		
 		else{
+			
+			unThreadpool.cambiarCantidadDeWorkers(threadsWorking);		
+			this.prepararLasLlavesParaEntrar();
 			unThreadpool.ponerTrabajadoresATrabajar();
+			
+			
 			try {
 				unMonitorTrabajadores.esperarAQueTerminenTrabajadores();
 				unaCabinaDeDescanso.reset();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-			}	
+			}
+			
+			
 		}
 
 	}
@@ -121,7 +125,6 @@ public class GameOfLifeGrid implements CellGrid {
 	
 	public void resetearCelula(Cell aCell) {
 		cell = aCell;
-		System.out.println("estoy reseteando " + cell);
 		cell.neighbour = 0;
 	}
 
@@ -150,7 +153,6 @@ public class GameOfLifeGrid implements CellGrid {
 	    row = cell.row;
 	    
 	    
-	    System.out.println("poniendo los vecinos de " + cell);
 	    addNeighbour( col-1, row-1 );
 	    addNeighbour( col, row-1 );
 	    addNeighbour( col+1, row-1 );
@@ -182,7 +184,7 @@ public class GameOfLifeGrid implements CellGrid {
 
 	public void eliminarMuertosDeCelula(Cell aCell) {
 		cell = aCell;
-		System.out.println("deberia matar a " + cell + " "+ (cell.neighbour != 3 && cell.neighbour != 2) );
+		
 		if ( cell.neighbour != 3 && cell.neighbour != 2 ) {
 		       currentShape.remove( cell );
 		}			
@@ -209,7 +211,7 @@ public class GameOfLifeGrid implements CellGrid {
 
 	public void nuevasCeldasACelula(Cell aCell) {
 		cell = aCell;
-		System.out.println("deberia traer a la vida a" + cell + " "+ (cell.neighbour == 3) );
+		
 		if ( cell.neighbour == 3 ) {
 		        setCell( cell.col, cell.row, true );
 		}
@@ -234,7 +236,7 @@ public class GameOfLifeGrid implements CellGrid {
 	 *            Cell-row
 	 */
 
-	// si falla algo, seguro es aca.
+
 	public synchronized void addNeighbour(int col, int row) {
 		try {
 			Cell cell = (Cell) nextShape.get(grid[col][row]);

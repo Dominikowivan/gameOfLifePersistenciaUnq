@@ -17,13 +17,13 @@ public class BufferDeRegiones {
 	}
 
 	public synchronized void producirRegiones(Productor productor) throws InterruptedException {
-		System.out.println("Empeze a producir regiones");
+		
 		while (this.faltanTrabajarRegiones()) {
 			if (!this.hayLugarEnElBuffer()) {
 				wait();
 			}
 
-			if (this.faltanTrabajarRegiones() && hayLugarEnElBuffer()) {
+			if (puedoCrearRegion()) {
 				Cell cell = (Cell) golg.e.nextElement();
 				RegionDeTablero regionDeTablero = productor.construirRegion(cell);
 
@@ -32,70 +32,31 @@ public class BufferDeRegiones {
 
 			notifyAll();
 		}
-		System.out.println("termine de producir Regiones");
+		
 	}
 
-	public synchronized void resetearCeldas(Consumidor unWorker) throws InterruptedException {
-		System.out.println("Empeze a resetear regiones");
+	private boolean puedoCrearRegion() {
+		return this.faltanTrabajarRegiones() && hayLugarEnElBuffer();
+	}
+
+	public synchronized void consumirRegion(Consumidor unWorker) throws InterruptedException {
+		
 		while (this.faltanConsumirRegiones()) {
 			if (!this.hayRegionEnBuffer()) {
 				wait();
 			}
 
-			if (this.faltanConsumirRegiones() && this.hayRegionEnBuffer()) {
+			if (puedoConsumirRegion()) {
 				RegionDeTablero regionDeTablero = buffer.pop();
-				unWorker.resetearRegion(regionDeTablero,golg);
+				unWorker.consumir(regionDeTablero,golg);
 			}
 			notifyAll();
 		}
-		System.out.println("termine de Resetear regiones");
+		
 	}
 
-	public synchronized void agregarVecinos(Consumidor unWorker) throws InterruptedException {
-		System.out.println("Empeze a agregar Vecinos");
-		while (this.faltanConsumirRegiones()) {
-			if (!this.hayRegionEnBuffer()) {
-				wait();
-			}
-
-			if (this.faltanConsumirRegiones() && this.hayRegionEnBuffer()) {
-				RegionDeTablero regionDeTablero = buffer.pop();
-				unWorker.agregarVecinosRegion(regionDeTablero, golg);
-			}
-
-			notifyAll();
-		}
-	}
-
-	public synchronized void eliminarMuertos(Consumidor unWorker) throws InterruptedException {
-		System.out.println("Empeze a eliminar muertos");
-		while (this.faltanConsumirRegiones()) {
-			if (!this.hayRegionEnBuffer()) {
-				wait();
-			}
-
-			if (this.faltanConsumirRegiones() && this.hayRegionEnBuffer()) {
-				RegionDeTablero regionDeTablero = buffer.pop();
-				unWorker.eliminarMuertosRegion(regionDeTablero, golg);
-			}
-			notifyAll();
-		}
-	}
-
-	public synchronized void nuevasCeldas(Consumidor unWorker)  throws InterruptedException{
-		System.out.println("Empeze traer a los nacidos");
-		while (this.faltanConsumirRegiones()){
-            if(!this.hayRegionEnBuffer()){
-                wait();
-            }
-            
-            if (this.faltanConsumirRegiones() && this.hayRegionEnBuffer() ) {
-            	RegionDeTablero regionDeTablero = buffer.pop();
-            	unWorker.nuevasCeldas(regionDeTablero,golg);
-			}
-            notifyAll();
-		}
-		System.out.println("Termine de traer a los nacidos");
+	private boolean puedoConsumirRegion() {
+		return this.faltanConsumirRegiones() && this.hayRegionEnBuffer();
 	}
 
 	private boolean hayRegionEnBuffer() {

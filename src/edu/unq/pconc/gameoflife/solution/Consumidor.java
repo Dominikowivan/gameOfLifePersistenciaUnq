@@ -1,7 +1,15 @@
 package edu.unq.pconc.gameoflife.solution;
 
+import edu.unq.pconc.gameoflife.solution.EstrategiasDeConsumo.EstrategiaDeAgregarVecinos;
+import edu.unq.pconc.gameoflife.solution.EstrategiasDeConsumo.EstrategiaDeConsumo;
+import edu.unq.pconc.gameoflife.solution.EstrategiasDeConsumo.EstrategiaDeEliminarALosMuertos;
+import edu.unq.pconc.gameoflife.solution.EstrategiasDeConsumo.EstrategiaDeLimpiarCeldas;
+import edu.unq.pconc.gameoflife.solution.EstrategiasDeConsumo.EstrategiaDeNuevasCeldas;
+
 public class Consumidor extends Worker {
 
+	EstrategiaDeConsumo estrategiaDeConsumo;
+	
 	public Consumidor(BufferDeRegiones bufferDeRegiones, CabinaDeDescanso cabinaDeDescanso, MonitorDeQueTerminaronLosTrabajadores monitorTrabajador) {
 		super(bufferDeRegiones, cabinaDeDescanso,monitorTrabajador);
 	}
@@ -9,42 +17,31 @@ public class Consumidor extends Worker {
 	@Override
 	public void run() {
 		try {
-			unBufferDeRegiones.resetearCeldas(this);
+			
+			
+			estrategiaDeConsumo = new EstrategiaDeLimpiarCeldas();
+			unBufferDeRegiones.consumirRegion(this);
 			unaCabinaDeDescanso.descansarHastaProximoTrabajo(this,1);
-			unBufferDeRegiones.agregarVecinos(this);
+			
+			estrategiaDeConsumo = new EstrategiaDeAgregarVecinos();
+			unBufferDeRegiones.consumirRegion(this);
 			unaCabinaDeDescanso.descansarHastaProximoTrabajo(this,2);
-			unBufferDeRegiones.eliminarMuertos(this);
-        	unaCabinaDeDescanso.descansarHastaProximoTrabajo(this,3);
-        	unBufferDeRegiones.nuevasCeldas(this);
+			
+			estrategiaDeConsumo = new EstrategiaDeEliminarALosMuertos();
+			unBufferDeRegiones.consumirRegion(this);
+			unaCabinaDeDescanso.descansarHastaProximoTrabajo(this,3);
+        	
+			estrategiaDeConsumo = new EstrategiaDeNuevasCeldas();
+			unBufferDeRegiones.consumirRegion(this);
         	monitorTrabajador.termine(this);
 			
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 	}
-
-	public void resetearRegion(RegionDeTablero regionDeTablero, GameOfLifeGrid golg) {
-		Cell cell = regionDeTablero.getCell();
-		golg.resetearCelula(cell);
-		
-	}
 	
-	//recordatorio de que si falla algo, seguro es esto
-	public void agregarVecinosRegion(RegionDeTablero regionDeTablero, GameOfLifeGrid golg) {
-		Cell cell = regionDeTablero.getCell();
-		golg.agregarVecinosACelula(cell);
-		
-	}
-
-	public void eliminarMuertosRegion(RegionDeTablero regionDeTablero,GameOfLifeGrid golg) {
-		Cell cell = regionDeTablero.getCell();  
-		golg.eliminarMuertosDeCelula(cell);
-	
-	}
-
-	public void nuevasCeldas(RegionDeTablero regionDeTablero,GameOfLifeGrid golg) {
-		Cell cell = regionDeTablero.getCell(); 
-		golg.nuevasCeldasACelula(cell);
+	public void consumir(RegionDeTablero regionDeTablero, GameOfLifeGrid golg) {
+		estrategiaDeConsumo.consumir(regionDeTablero,golg);  
 	}
 
 

@@ -17,7 +17,7 @@ public class Productor extends Worker {
         	unBufferDeRegiones.producirRegiones(this);
         	unaCabinaDeDescanso.descansarHastaProximoTrabajo(this,3);
         	unBufferDeRegiones.producirRegiones(this);
-        	//unaCabinaDeDescanso.descansarHastaProximoTrabajo(this,4);
+
         	monitorTrabajador.termine(this);
         	
         } catch (InterruptedException e) {
@@ -26,7 +26,7 @@ public class Productor extends Worker {
     }
 
 	public RegionDeTablero construirRegion(Cell cell) {
-		// System.out.println("estoy creando una region para" + cell);
+
 		return new RegionDeTablero(cell);
 	}
 

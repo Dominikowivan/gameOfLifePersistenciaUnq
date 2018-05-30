@@ -13,16 +13,15 @@ public class MonitorDeQueTerminaronLosTrabajadores {
 	
 	public synchronized void termine(Worker unWorker) {
 		workersQueTerminaron++;
-		System.out.println("Termine de trabajar");
 		notifyAll();
 	}
 	
 	public synchronized void esperarAQueTerminenTrabajadores() throws InterruptedException{
 		while(noTerminaronLosTrabajadores()){
-			System.out.println("Entre a Esperar que terminen los trabajadores");
+			
 			wait();
 		}
-		System.out.println("Sali a Esperar que terminen los trabajadores");
+		
 		workersQueTerminaron=0;
 	}
 
