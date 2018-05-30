@@ -22,6 +22,10 @@ public class GameOfLifeGrid implements CellGrid {
 	private ThreadPool unThreadpool;
 	private BufferDeRegiones bufferParaTrabajadores;
 	private CabinaDeDescanso unaCabinaDeDescanso;
+	private MonitorDeQueTerminaroLosTrabajadores unMonitorTrabajadores;
+	private Integer threadsWorking;
+	
+	
 	public  Enumeration e;
 	public Cell cell;
 	public int col, row;
@@ -57,8 +61,10 @@ public class GameOfLifeGrid implements CellGrid {
 			for (int r = 0; r < cellRows; r++)
 				grid[c][r] = new Cell(c, r);
 		bufferParaTrabajadores = new BufferDeRegiones(3, this);
+		unMonitorTrabajadores = new MonitorDeQueTerminaroLosTrabajadores();
 		unaCabinaDeDescanso = new CabinaDeDescanso(this);
-		unThreadpool = new ThreadPool(bufferParaTrabajadores, unaCabinaDeDescanso);
+		unThreadpool = new ThreadPool(bufferParaTrabajadores, unaCabinaDeDescanso,unMonitorTrabajadores);
+		threadsWorking = 2;
 	}
 
 	/**
@@ -72,18 +78,33 @@ public class GameOfLifeGrid implements CellGrid {
 
 	/**
 	 * Create next generation of shape.
+	 * @throws InterruptedException 
 	 */
-	public synchronized void next() {
+	public void next() {
 		
 		generations++;
-		nextShape.clear();
+		nextShape.clear(); 
+		
+		bufferParaTrabajadores = new BufferDeRegiones(3, this);
+		unMonitorTrabajadores = new MonitorDeQueTerminaroLosTrabajadores();
+		unaCabinaDeDescanso = new CabinaDeDescanso(this);
+		unThreadpool = new ThreadPool(bufferParaTrabajadores, unaCabinaDeDescanso,unMonitorTrabajadores);
+		unThreadpool.cambiarCantidadDeWorkers(threadsWorking);
 		
 		this.prepararLasLlavesParaEntrar();
-		unThreadpool.ponerTrabajadoresATrabajar();
-
 		
-		//this.resetcells(); this.addvecinos(); this.buryDead(); this.bringNewBorns(); 
+		if(threadsWorking == 1){
+			this.resetcells(); this.addvecinos(); this.buryDead(); this.bringNewBorns(); 	
+		}
 		
+		else{
+			unThreadpool.ponerTrabajadoresATrabajar();
+			try {
+				unMonitorTrabajadores.esperarAQueTerminenTrabajadores();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}	
+		}
 
 	}
 
@@ -343,7 +364,7 @@ public class GameOfLifeGrid implements CellGrid {
 	}
 
 	public void setThreads(int threads) {
-		unThreadpool.cambiarCantidadDeWorkers(threads);
+		threadsWorking = threads;
 	}
 
 	

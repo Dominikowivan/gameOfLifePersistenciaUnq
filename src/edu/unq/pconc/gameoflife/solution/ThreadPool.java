@@ -8,20 +8,23 @@ public class ThreadPool {
 
     private BufferDeRegiones bufferDeRegiones;
     private CabinaDeDescanso unaCabinaDeDescanso;
+	private MonitorDeQueTerminaroLosTrabajadores monitorTrabajador;
 
-    public ThreadPool(BufferDeRegiones unBuffer, CabinaDeDescanso cabinaDeDescanso){
+    
+    public ThreadPool(BufferDeRegiones unBuffer, CabinaDeDescanso cabinaDeDescanso, MonitorDeQueTerminaroLosTrabajadores unMonitorTrabajador){
         cantidadDeWorkersProductores = 1;
         cantidadDeWorkersConsumidores = 1;
         
         bufferDeRegiones = unBuffer;
         unaCabinaDeDescanso = cabinaDeDescanso;
-       
+        monitorTrabajador = unMonitorTrabajador;
         this.ponerSillasEnLaCabina();
     }
     
     private void ponerSillasEnLaCabina() {
         Integer unTotalDeTrabajadores = cantidadDeWorkersProductores+cantidadDeWorkersConsumidores;
         unaCabinaDeDescanso.totalDeTrabajadores(unTotalDeTrabajadores);
+        monitorTrabajador.totalDeTrabajadores(unTotalDeTrabajadores);
 	}
 
 	public void cambiarCantidadDeWorkers(int threads) {
@@ -43,7 +46,7 @@ public class ThreadPool {
         for (int i = 0; i < cantidadDeWorkersProductores ; i++) {
 
             //creo el worker que va a trabajar produciendo, y lo pongo a trabajar.
-            Worker worker = new Productor(this.bufferDeRegiones,unaCabinaDeDescanso);
+            Worker worker = new Productor(this.bufferDeRegiones,unaCabinaDeDescanso,monitorTrabajador);
             worker.start();
         }
         
@@ -51,7 +54,7 @@ public class ThreadPool {
         for (int i = 0; i < cantidadDeWorkersConsumidores ; i++) {
       
             //creo el worker que va a trabajar consumiento, y lo pongo a trabajar.
-            Worker worker = new Consumidor(this.bufferDeRegiones,unaCabinaDeDescanso);
+            Worker worker = new Consumidor(this.bufferDeRegiones,unaCabinaDeDescanso,monitorTrabajador);
             worker.start();
         }
     }

@@ -16,7 +16,7 @@ public class CabinaDeDescanso {
 	}
 
 	public synchronized void descansarHastaProximoTrabajo(Worker unWorker, Integer turno) throws InterruptedException {
-		//System.out.println("empece mi descanso del turno " + (turno - 1));
+		System.out.println("empece mi descanso del turno " + (turno - 1));
 		trabajadoresDescansando++;
 
 		if (this.soyElUltimoEnTerminarSuTrabajo()) {
@@ -27,7 +27,7 @@ public class CabinaDeDescanso {
 			wait();
 		}
 
-		//System.out.println("Sali a trabajar en el turno " + turno);
+		System.out.println("Sali a trabajar en el turno " + turno);
 
 		notifyAll();
 	}
@@ -37,7 +37,7 @@ public class CabinaDeDescanso {
 	}
 
 	private void realizarlimpieza() {
-		//System.out.println("realize la limpieza");
+		System.out.println("realize la limpieza");
 	
 		trabajadoresDescansando = 0;
 		turnoDeTrabajo++;
@@ -46,7 +46,7 @@ public class CabinaDeDescanso {
 			golg.prepararLasLlavesParaEntrar();
 		}
 		else {
-			//System.out.println("Entre aca");
+			System.out.println("Entre aca");
 			golg.prepararLasLlavesParaIrse();
 		}
 		
