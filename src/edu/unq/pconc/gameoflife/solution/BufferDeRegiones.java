@@ -8,7 +8,6 @@ public class BufferDeRegiones {
 	private Stack<RegionDeTablero> buffer;
 	private Integer tamanioDelBuffer;
 	private GameOfLifeGrid golg;
-	private Enumeration keys;
 
 	public BufferDeRegiones(int elTamanioDelBuffer, GameOfLifeGrid unGolg) {
 
@@ -25,7 +24,7 @@ public class BufferDeRegiones {
 			}
 
 			if (this.faltanTrabajarRegiones() && hayLugarEnElBuffer()) {
-				Cell cell = (Cell) keys.nextElement();
+				Cell cell = (Cell) golg.e.nextElement();
 				RegionDeTablero regionDeTablero = productor.construirRegion(cell);
 
 				buffer.push(regionDeTablero);
@@ -45,7 +44,7 @@ public class BufferDeRegiones {
 
 			if (this.faltanConsumirRegiones() && this.hayRegionEnBuffer()) {
 				RegionDeTablero regionDeTablero = buffer.pop();
-				unWorker.resetearRegion(regionDeTablero);
+				unWorker.resetearRegion(regionDeTablero,golg);
 			}
 			notifyAll();
 		}
@@ -112,11 +111,8 @@ public class BufferDeRegiones {
 	}
 
 	private boolean faltanTrabajarRegiones() {
-		return keys.hasMoreElements();
+		return golg.e.hasMoreElements();
 	}
 
-	public void setKeys(Enumeration theKeys) {
-		keys = theKeys;
-	}
 
 }
